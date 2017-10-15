@@ -19,6 +19,7 @@ CamelCaseEdit::Input CamelCaseEdit::classifyInput(QChar input)
     return Input::Other;
 }
 
+#if 0
 int CamelCaseEdit::camelCaseLeft(const QString &text, int position)
 {
     int state = 0;
@@ -107,6 +108,40 @@ int CamelCaseEdit::camelCaseLeft(const QString &text, int position)
 
         if (position > 0)
             --position;
+    }
+
+    return position;
+}
+#endif
+
+static bool isSeparator(QChar c)
+{
+    return c.isSpace() || (c == '_') || (c == QChar::ParagraphSeparator);
+}
+
+int CamelCaseEdit::camelCaseLeft(const QString &text, int position)
+{
+    if (position >= text.size())
+        return text.size() - 1;
+
+    if (position <= 1)
+        return 0;
+
+    while (position > 0) {
+        const QChar c = text.at(position);
+        if (isSeparator(c) || c.isUpper())
+            --position;
+        else
+            break;
+    }
+
+    while (--position > 0) {
+        const QChar c = text.at(position);
+        if (c.isUpper())
+            return position;
+
+        if (isSeparator(text.at(position)))
+            return position + 1;
     }
 
     return position;

@@ -26,6 +26,7 @@ private slots:
        QTest::newRow("after-snake-word")       << "snake_case"       <<   9 <<  6;
        QTest::newRow("after-space-word")       << "natural word"     <<  11 <<  8;
        QTest::newRow("in-camel-word")          << "CamelCaseText"    <<   7 <<  5;
+       QTest::newRow("at-word-begin")          << "Lorem Ipsum"      <<   6 <<  0;
     }
 
     void camelCaseLeft()
