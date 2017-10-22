@@ -22,11 +22,13 @@ private slots:
        QTest::newRow("after-end")              << "Text"             <<   4 <<  3;
        QTest::newRow("after-word")             << "Text"             <<   3 <<  0;
        QTest::newRow("after-camel-word")       << "CamelCaseText"    <<  12 <<  9;
-       QTest::newRow("after-lower-camel-word") << "camelCase"        <<   8 <<  5;
-       QTest::newRow("after-snake-word")       << "snake_case"       <<   9 <<  6;
+       QTest::newRow("after-change-word")      << "camelCHANGEtext"  <<  14 << 10;
        QTest::newRow("after-space-word")       << "natural word"     <<  11 <<  8;
        QTest::newRow("in-camel-word")          << "CamelCaseText"    <<   7 <<  5;
-       QTest::newRow("at-word-begin")          << "Lorem Ipsum"      <<   6 <<  0;
+       QTest::newRow("in-space-word")          << "Lorem Ipsum"      <<   8 <<  6;
+       QTest::newRow("after-space-word")       << "The quick brown fox" << 15 << 10;
+       QTest::newRow("word-left")              << "first second#"    << 12 << 6;
+       QTest::newRow("word-left2")             << "first#"           << 5 << 0;
     }
 
     void camelCaseLeft()

@@ -19,10 +19,41 @@ CamelCaseEdit::Input CamelCaseEdit::classifyInput(QChar input)
     return Input::Other;
 }
 
-#if 0
+static int charLeft(const QString &text, int position)
+{
+    Q_UNUSED(text);
+
+    return (position > 0) ? --position : 0;
+}
+
+static int charRight(const QString &text, int position)
+{
+    const int size = text.size() - 1;
+
+    return (position < size) ? ++position : size;
+}
+
+static int wordLeft(const QString &text, int position)
+{
+    position = charRight(text, position);
+
+    while (position > 0 && !text.at(position).isSpace())
+        --position;
+
+    if (text.at(position).isSpace())
+        return charRight(text, position);
+
+    return position;
+}
+
+static int wordRight(const QString &text, int position)
+{
+    return 0;
+}
+
 int CamelCaseEdit::camelCaseLeft(const QString &text, int position)
 {
-    int state = 0;
+    State state = State::Default;
 
     if (position >= text.size())
         return text.size() - 1;
@@ -31,117 +62,83 @@ int CamelCaseEdit::camelCaseLeft(const QString &text, int position)
         return 0;
 
     for (;;) {
-        Input input = classifyInput(text.at(position));
+        const QChar c = text.at(position);
+        Input input = classifyInput(c);
 
         switch (state) {
-        case 0:
+        case State::Default:
             switch (input) {
             case Input::Upper:
-                state = 1;
+                state = State::Upper;
                 break;
             case Input::Lower:
-                state = 2;
+                state = State::Lower;
                 break;
             case Input::Underscore:
-                state = 3;
+                state = State::Underscore;
                 break;
             case Input::Space:
-                state = 4;
+                state = State::Space;
                 break;
             default:
-                ++position;
-                return -1; //move(QTextCursor::WordLeft, mode);
+                return wordLeft(text, position);
             }
             break;
-        case 1:
+
+        case State::Upper:
             switch (input) {
             case Input::Upper:
                 break;
             default:
-                return ++position; // move(QTextCursor::Right, mode);
+                return charRight(text, position);
             }
             break;
-        case 2:
+
+        case State::Lower:
             switch (input) {
             case Input::Upper:
                 return position;
             case Input::Lower:
                 break;
             default:
-                return ++position; // move(QTextCursor::Right, mode);
+                return charRight(text, position);
             }
             break;
-        case 3:
+
+        case State::Underscore:
             switch (input) {
             case Input::Underscore:
                 break;
             case Input::Upper:
-                state = 1;
+                state = State::Upper;
                 break;
             case Input::Lower:
-                state = 2;
+                state = State::Lower;
                 break;
             default:
-                return ++position; // move(QTextCursor::Right, mode);
+                return charRight(text, position);
             }
             break;
-        case 4:
+
+        case State::Space:
             switch (input) {
             case Input::Space:
                 break;
             case Input::Upper:
-                state = 1;
+                state = State::Upper;
                 break;
             case Input::Lower:
-                state = 2;
+                state = State::Lower;
                 break;
             case Input::Underscore:
-                state = 3;
+                state = State::Underscore;
                 break;
             default:
-                ++position;
-                if (position == 0)
-                    return true;
-                return -1; // move(QTextCursor::WordLeft, mode);
+                return wordLeft(text, position);
             }
         }
 
-        if (position > 0)
-            --position;
-    }
-
-    return position;
-}
-#endif
-
-static bool isSeparator(QChar c)
-{
-    return c.isSpace() || (c == '_') || (c == QChar::ParagraphSeparator);
-}
-
-int CamelCaseEdit::camelCaseLeft(const QString &text, int position)
-{
-    if (position >= text.size())
-        return text.size() - 1;
-
-    if (position <= 1)
-        return 0;
-
-    while (position > 0) {
-        const QChar c = text.at(position);
-        if (isSeparator(c) || c.isUpper())
-            --position;
-        else
-            break;
-    }
-
-    while (--position > 0) {
-        const QChar c = text.at(position);
-        if (c.isUpper())
-            return position;
-
-        if (isSeparator(text.at(position)))
-            return position + 1;
+        position = charLeft(text, position);
     }
 
     return position;

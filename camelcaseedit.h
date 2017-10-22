@@ -17,6 +17,14 @@ private:
         Other
     };
 
+    enum class State {
+        Default = 0,
+        Upper = 1,
+        Lower = 2,
+        Underscore = 3,
+        Space = 4
+    };
+
     static CamelCaseEdit::Input classifyInput(QChar input);
 };
 
