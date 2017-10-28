@@ -7,6 +7,7 @@ class CamelCaseEdit
 {
 public:
     static int camelCaseLeft(const QString &text, int position);
+    static int camelCaseRight(const QString &text, int position);
 
 private:
     enum class Input {

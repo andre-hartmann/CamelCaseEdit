@@ -7,39 +7,97 @@ class CamelCaseEditingTest : public QObject
 {
     Q_OBJECT
 
-public:
-    CamelCaseEditingTest() { }
-
 private slots:
     void camelCaseLeft_data()
     {
-       QTest::addColumn<QString>("text");
-       QTest::addColumn<int>("position");
-       QTest::addColumn<int>("expected");
+        QTest::addColumn<QString>("given");
+        QTest::addColumn<QString>("expected");
 
-       QTest::newRow("before-beginning")       << "Text"             <<  -1 <<  0;
-       QTest::newRow("at-beginning")           << "Text"             <<   0 <<  0;
-       QTest::newRow("after-end")              << "Text"             <<   4 <<  3;
-       QTest::newRow("after-word")             << "Text"             <<   3 <<  0;
-       QTest::newRow("after-camel-word")       << "CamelCaseText"    <<  12 <<  9;
-       QTest::newRow("after-change-word")      << "camelCHANGEtext"  <<  14 << 10;
-       QTest::newRow("after-space-word")       << "natural word"     <<  11 <<  8;
-       QTest::newRow("in-camel-word")          << "CamelCaseText"    <<   7 <<  5;
-       QTest::newRow("in-space-word")          << "Lorem Ipsum"      <<   8 <<  6;
-       QTest::newRow("after-space-word")       << "The quick brown fox" << 15 << 10;
-       QTest::newRow("word-left")              << "first second#"    << 12 << 6;
-       QTest::newRow("word-left2")             << "first#"           << 5 << 0;
+        QTest::newRow("camel")          << "ThisIsCamelCase|Text"
+                                        << "ThisIsCamel|CaseText";
+        QTest::newRow("upper-lower")    << "THISisCAMELcase|TEXT"
+                                        << "THISisCAME|LcaseTEXT";
+        QTest::newRow("natural-before") << "This is natural |text"
+                                        << "This is |natural text";
+        QTest::newRow("natural-within") << "This is natu|ral text"
+                                        << "This is |natural text";
+        QTest::newRow("natural-after")  << "This is natural| text"
+                                        << "This is |natural text";
+        QTest::newRow("number")         << "ThisIsText4Fun|"
+                                        << "ThisIsText4|Fun";
+        QTest::newRow("number-2")       << "ThisIsText22|Fun"
+                                        << "ThisIs|Text22Fun";
+        QTest::newRow("special")        << "ThisIsText#And|More"
+                                        << "ThisIsText#|AndMore";
+        QTest::newRow("special-2")      << "ThisIsText#|AndMore"
+                                        << "|ThisIsText#AndMore";
+        QTest::newRow("snake-within")   << "this_is_sna|ke_text"
+                                        << "this_is_|snake_text";
+        QTest::newRow("SNAKE-within")   << "THIS_IS_SNA|KE_TEXT"
+                                        << "THIS_IS_|SNAKE_TEXT";
+        QTest::newRow("snake-before")   << "this_is_snake_|text"
+                                        << "this_is_|snake_text";
+        QTest::newRow("snake-after")    << "this_is_snake|_text"
+                                        << "this_is_|snake_text";
     }
 
     void camelCaseLeft()
     {
-        QFETCH(QString, text);
-        QFETCH(int, position);
-        QFETCH(int, expected);
+        QFETCH(QString, given);
+        QFETCH(QString, expected);
 
-        const int result = CamelCaseEdit::camelCaseLeft(text, position);
+        const int position = given.indexOf('|') - 1;
+        given.remove('|');
+        const int result = CamelCaseEdit::camelCaseLeft(given, position);
+        given.insert(result, '|');
 
-        QCOMPARE(result, expected);
+        QCOMPARE(given, expected);
+    }
+
+    void camelCaseRight_data()
+    {
+        QTest::addColumn<QString>("given");
+        QTest::addColumn<QString>("expected");
+
+        QTest::newRow("camel")          << "ThisIsCamel|CaseText"
+                                        << "ThisIsCamelCase|Text";
+        QTest::newRow("upper-lower")    << "THISisCAMEL|caseTEXT"
+                                        << "THISisCAMELcase|TEXT";
+        QTest::newRow("natural-before") << "This is |natural |text"
+                                        << "This is natural |text";
+        QTest::newRow("natural-within") << "This is nat|ural text"
+                                        << "This is natural |text";
+        QTest::newRow("natural-after")  << "This is| natural text"
+                                        << "This is natural |text";
+        QTest::newRow("number")         << "ThisIs|Text4Fun"
+                                        << "ThisIsText4|Fun";
+        QTest::newRow("number-2")       << "ThisIsText|22Fun"
+                                        << "ThisIsText22|Fun";
+        QTest::newRow("special")        << "ThisIs|Text#AndMore"
+                                        << "ThisIsText|#AndMore";
+        QTest::newRow("special-2")      << "ThisIsText|#AndMore"
+                                        << "ThisIsText#|AndMore";
+        QTest::newRow("snake-within")   << "this_is_sna|ke_text"
+                                        << "this_is_snake_|text";
+        QTest::newRow("SNAKE-within")   << "THIS_IS_SNA|KE_TEXT"
+                                        << "THIS_IS_SNAKE_|TEXT";
+        QTest::newRow("snake-before")   << "this_is_|snake_text"
+                                        << "this_is_snake_|text";
+        QTest::newRow("snake-after")    << "this_is|_snake_text"
+                                        << "this_is_snake_|text";
+    }
+
+    void camelCaseRight()
+    {
+        QFETCH(QString, given);
+        QFETCH(QString, expected);
+
+        const int position = given.indexOf('|') + 1;
+        given.remove('|');
+        const int result = CamelCaseEdit::camelCaseRight(given, position);
+        given.insert(result, '|');
+
+        QCOMPARE(given, expected);
     }
 };
 
