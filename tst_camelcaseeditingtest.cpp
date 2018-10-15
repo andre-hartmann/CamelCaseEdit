@@ -91,6 +91,12 @@ private slots:
                                         << "this_is_snake_|text";
         QTest::newRow("snake-after")    << "this_is|_snake_text"
                                         << "this_is_snake_|text";
+        QTest::newRow("namespace")      << "|Namespace::Class::function"
+                                        << "Namespace|::Class::function";
+        QTest::newRow("namespace-2")    << "Namespace|::Class::function"
+                                        << "Namespace::|Class::function";
+        QTest::newRow("namespace-3")    << "Namespace::Class::|function"
+                                        << "Namespace::Class::function|";
     }
 
     void camelCaseRight()
@@ -99,11 +105,11 @@ private slots:
         QFETCH(QString, expected);
 
         const int position = given.indexOf('|') + 1;
-        given.remove('|');
-        const int result = CamelCaseEdit::camelCaseRight(given, position);
-        given.insert(result, '|');
+        QString result = given.remove('|');
+        const int resultPosition = CamelCaseEdit::camelCaseRight(given, position);
+        result.insert(resultPosition, '|');
 
-        QCOMPARE(given, expected);
+        QCOMPARE(result, expected);
     }
 };
 

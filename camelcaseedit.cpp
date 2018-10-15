@@ -28,7 +28,7 @@ static int charLeft(const QString &text, int position)
 
 static int charRight(const QString &text, int position)
 {
-    const int size = text.size() - 1;
+    const int size = text.size();
 
     return (position < size) ? ++position : size;
 }
@@ -61,7 +61,17 @@ static int wordLeft(const QString &text, int position)
 
 static int wordRight(const QString &text, int position)
 {
-    return 0;
+    const int size = text.size() - 1;
+
+    if (isWordSeparator(text.at(position))) {
+        while (position < size && isWordSeparator(text.at(position)))
+            ++position;
+
+        if (position == size)
+            return charLeft(text, position);
+    }
+
+    return position;
 }
 
 static bool isInvalidPosition(const QString &text, int *position)
@@ -258,5 +268,7 @@ int CamelCaseEdit::camelCaseRight(const QString &text, int position)
         }
 
         position = charRight(text, position);
+        if (position == text.size())
+            return position;
     }
 }
