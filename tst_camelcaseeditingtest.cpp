@@ -30,7 +30,7 @@ private slots:
         QTest::newRow("special")        << "ThisIsText#And|More"
                                         << "ThisIsText#|AndMore";
         QTest::newRow("special-2")      << "ThisIsText#|AndMore"
-                                        << "|ThisIsText#AndMore";
+                                        << "ThisIsText|#AndMore";
         QTest::newRow("snake-within")   << "this_is_sna|ke_text"
                                         << "this_is_|snake_text";
         QTest::newRow("SNAKE-within")   << "THIS_IS_SNA|KE_TEXT"
@@ -39,6 +39,12 @@ private slots:
                                         << "this_is_|snake_text";
         QTest::newRow("snake-after")    << "this_is_snake|_text"
                                         << "this_is_|snake_text";
+        QTest::newRow("namespace")      << "Namespace::Class|::function"
+                                        << "Namespace::|Class::function";
+        QTest::newRow("namespace-2")    << "Namespace::|Class::function"
+                                        << "Namespace|::Class::function";
+        QTest::newRow("namespace-3")    << "::|memset()"
+                                        << "|::memset()";
     }
 
     void camelCaseLeft()
@@ -47,11 +53,11 @@ private slots:
         QFETCH(QString, expected);
 
         const int position = given.indexOf('|') - 1;
-        given.remove('|');
-        const int result = CamelCaseEdit::camelCaseLeft(given, position);
-        given.insert(result, '|');
+        QString result = given.remove('|');
+        const int resultPosition = CamelCaseEdit::camelCaseLeft(given, position);
+        result.insert(resultPosition, '|');
 
-        QCOMPARE(given, expected);
+        QCOMPARE(result, expected);
     }
 
     void camelCaseRight_data()

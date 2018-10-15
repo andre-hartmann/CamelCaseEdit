@@ -33,15 +33,28 @@ static int charRight(const QString &text, int position)
     return (position < size) ? ++position : size;
 }
 
+static bool isWordSeparator(QChar c)
+{
+    return c.isSpace() || c.isPunct() || c == '_';
+}
+
 static int wordLeft(const QString &text, int position)
 {
-    position = charRight(text, position);
+    if (isWordSeparator(text.at(position))) {
+        while (position > 0 && isWordSeparator(text.at(position)))
+            --position;
 
-    while (position > 0 && !text.at(position).isSpace())
-        --position;
+        if (position > 0)
+            return charRight(text, position);
+    } else {
+        position = charRight(text, position);
 
-    if (text.at(position).isSpace())
-        return charRight(text, position);
+        while (position > 0 && !isWordSeparator(text.at(position)))
+            --position;
+
+        if (isWordSeparator(text.at(position)))
+            return charRight(text, position);
+    }
 
     return position;
 }
