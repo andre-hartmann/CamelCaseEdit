@@ -1,7 +1,5 @@
 #include "camelcaseedit.h"
 
-#include <QTextCursor>
-
 CamelCaseEdit::Input CamelCaseEdit::classifyInput(QChar input)
 {
     if (input.isUpper())
