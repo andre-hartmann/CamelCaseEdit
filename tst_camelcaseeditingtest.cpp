@@ -74,7 +74,9 @@ private slots:
         QTest::newRow("natural-within") << "This is nat|ural text"
                                         << "This is natural |text";
         QTest::newRow("natural-after")  << "This is| natural text"
-                                        << "This is natural |text";
+                                        << "This is |natural text";
+        QTest::newRow("natural-eol")    << "This is natural |text"
+                                        << "This is natural text|";
         QTest::newRow("number")         << "ThisIs|Text4Fun"
                                         << "ThisIsText4|Fun";
         QTest::newRow("number-2")       << "ThisIsText|22Fun"
@@ -90,13 +92,17 @@ private slots:
         QTest::newRow("snake-before")   << "this_is_|snake_text"
                                         << "this_is_snake_|text";
         QTest::newRow("snake-after")    << "this_is|_snake_text"
-                                        << "this_is_snake_|text";
+                                        << "this_is_|snake_text";
         QTest::newRow("namespace")      << "|Namespace::Class::function"
                                         << "Namespace|::Class::function";
         QTest::newRow("namespace-2")    << "Namespace|::Class::function"
                                         << "Namespace::|Class::function";
         QTest::newRow("namespace-3")    << "Namespace::Class::|function"
                                         << "Namespace::Class::function|";
+        QTest::newRow("struct-member")  << "struct|.member"
+                                        << "struct.|member";
+        QTest::newRow("struct-member-2") << "struct|->member"
+                                         << "struct->|member";
     }
 
     void camelCaseRight()
@@ -104,7 +110,7 @@ private slots:
         QFETCH(QString, given);
         QFETCH(QString, expected);
 
-        const int position = given.indexOf('|') + 1;
+        const int position = given.indexOf('|');
         QString result = given.remove('|');
         const int resultPosition = CamelCaseEdit::camelCaseRight(given, position);
         result.insert(resultPosition, '|');

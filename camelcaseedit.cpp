@@ -35,7 +35,7 @@ static int charRight(const QString &text, int position)
 
 static bool isWordSeparator(QChar c)
 {
-    return c.isSpace() || c.isPunct() || c == '_';
+    return c.isSpace() || c.isPunct() || c == '_' || c == '-' || c == '>' || c == '<';
 }
 
 static int wordLeft(const QString &text, int position)
@@ -45,14 +45,6 @@ static int wordLeft(const QString &text, int position)
             --position;
 
         if (position > 0)
-            return charRight(text, position);
-    } else {
-        position = charRight(text, position);
-
-        while (position > 0 && !isWordSeparator(text.at(position)))
-            --position;
-
-        if (isWordSeparator(text.at(position)))
             return charRight(text, position);
     }
 
@@ -187,9 +179,6 @@ int CamelCaseEdit::camelCaseRight(const QString &text, int position)
     if (isInvalidPosition(text, &position))
         return position;
 
-    if (position == 0)
-        return position;
-
     for (;;) {
         const QChar c = text.at(position);
         const Input input = classifyInput(c);
@@ -233,7 +222,8 @@ int CamelCaseEdit::camelCaseRight(const QString &text, int position)
             case Input::Upper:
                 break;
             case Input::Lower:
-                return charLeft(text, position);
+                state = State::Lower;
+                break;
             case Input::Underscore:
                 state = State::Underscore;
                 break;
