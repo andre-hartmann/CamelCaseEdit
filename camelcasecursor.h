@@ -1,9 +1,9 @@
-#ifndef CAMELCASEEDIT_H
-#define CAMELCASEEDIT_H
+#ifndef CAMELCASECURSOR_H
+#define CAMELCASECURSOR_H
 
 #include <QObject>
 
-class CamelCaseEdit
+class CamelCaseCursor
 {
 public:
     static int camelCaseLeft(const QString &text, int position);
@@ -27,7 +27,7 @@ private:
         Space
     };
 
-    static CamelCaseEdit::Input classifyInput(QChar input);
+    static CamelCaseCursor::Input classifyInput(QChar input);
 };
 
-#endif // CAMELCASEEDIT_H
+#endif // CAMELCASECURSOR_H

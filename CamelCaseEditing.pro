@@ -26,9 +26,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         tst_camelcaseeditingtest.cpp \
-    camelcaseedit.cpp
+    camelcasecursor.cpp
 
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 HEADERS += \
-    camelcaseedit.h
+    camelcasecursor.h

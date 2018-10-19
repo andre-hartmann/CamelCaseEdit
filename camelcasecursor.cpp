@@ -1,6 +1,6 @@
-#include "camelcaseedit.h"
+#include "camelcasecursor.h"
 
-CamelCaseEdit::Input CamelCaseEdit::classifyInput(QChar input)
+CamelCaseCursor::Input CamelCaseCursor::classifyInput(QChar input)
 {
     if (input.isUpper())
         return Input::Upper;
@@ -79,7 +79,7 @@ static bool isInvalidPosition(const QString &text, int *position)
     return false;
 }
 
-int CamelCaseEdit::camelCaseLeft(const QString &text, int position)
+int CamelCaseCursor::camelCaseLeft(const QString &text, int position)
 {
     State state = State::Default;
 
@@ -109,7 +109,6 @@ int CamelCaseEdit::camelCaseLeft(const QString &text, int position)
                 return wordLeft(text, position);
             }
             break;
-
         case State::Upper:
             switch (input) {
             case Input::Upper:
@@ -118,7 +117,6 @@ int CamelCaseEdit::camelCaseLeft(const QString &text, int position)
                 return charRight(text, position);
             }
             break;
-
         case State::Lower:
             switch (input) {
             case Input::Upper:
@@ -129,7 +127,6 @@ int CamelCaseEdit::camelCaseLeft(const QString &text, int position)
                 return charRight(text, position);
             }
             break;
-
         case State::Underscore:
             switch (input) {
             case Input::Underscore:
@@ -144,7 +141,6 @@ int CamelCaseEdit::camelCaseLeft(const QString &text, int position)
                 return charRight(text, position);
             }
             break;
-
         case State::Space:
             switch (input) {
             case Input::Space:
@@ -170,7 +166,7 @@ int CamelCaseEdit::camelCaseLeft(const QString &text, int position)
     }
 }
 
-int CamelCaseEdit::camelCaseRight(const QString &text, int position)
+int CamelCaseCursor::camelCaseRight(const QString &text, int position)
 {
     State state = State::Default;
 
@@ -197,7 +193,6 @@ int CamelCaseEdit::camelCaseRight(const QString &text, int position)
                 return wordRight(text, position);
             }
             break;
-
         case State::Lower:
             switch (input) {
             case Input::Upper:
@@ -214,7 +209,6 @@ int CamelCaseEdit::camelCaseRight(const QString &text, int position)
                 return position;
             }
             break;
-
         case State::UpperContinuation:
             switch (input) {
             case Input::Upper:
@@ -231,7 +225,6 @@ int CamelCaseEdit::camelCaseRight(const QString &text, int position)
                 return true;
             }
             break;
-
         case State::Upper:
             switch (input) {
             case Input::Upper:
@@ -250,7 +243,6 @@ int CamelCaseEdit::camelCaseRight(const QString &text, int position)
                 return position;
             }
             break;
-
         case State::Underscore:
             switch (input) {
             case Input::Underscore:
@@ -262,7 +254,6 @@ int CamelCaseEdit::camelCaseRight(const QString &text, int position)
                 return position;
             }
             break;
-
         case State::Space:
             switch (input) {
             case Input::Space:

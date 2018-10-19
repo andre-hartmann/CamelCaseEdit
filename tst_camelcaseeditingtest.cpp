@@ -1,4 +1,4 @@
-#include "camelcaseedit.h"
+#include "camelcasecursor.h"
 
 #include <QString>
 #include <QtTest>
@@ -58,7 +58,7 @@ private slots:
 
         const int position = given.indexOf('|') - 1;
         QString result = given.remove('|');
-        const int resultPosition = CamelCaseEdit::camelCaseLeft(given, position);
+        const int resultPosition = CamelCaseCursor::camelCaseLeft(given, position);
         result.insert(resultPosition, '|');
 
         QCOMPARE(result, expected);
@@ -122,7 +122,7 @@ private slots:
 
         const int position = given.indexOf('|');
         QString result = given.remove('|');
-        const int resultPosition = CamelCaseEdit::camelCaseRight(given, position);
+        const int resultPosition = CamelCaseCursor::camelCaseRight(given, position);
         result.insert(resultPosition, '|');
 
         QCOMPARE(result, expected);
