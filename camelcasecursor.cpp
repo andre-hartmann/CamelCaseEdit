@@ -33,7 +33,7 @@ static int charRight(const QString &text, int position)
 
 static bool isWordSeparator(QChar c)
 {
-    return c.isSpace() || c.isPunct() || c == '_' || c == '-' || c == '>' || c == '<';
+    return c.isSpace() || c.isPunct() || c == '_' || c == '-' || c == '>' || c == '<' || c == '~';
 }
 
 static int wordLeft(const QString &text, int position)
