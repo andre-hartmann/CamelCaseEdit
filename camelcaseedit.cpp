@@ -215,9 +215,27 @@ int CamelCaseEdit::camelCaseRight(const QString &text, int position)
             }
             break;
 
+        case State::UpperContinuation:
+            switch (input) {
+            case Input::Upper:
+                break;
+            case Input::Lower:
+                return charLeft(text, position);
+            case Input::Underscore:
+                state = State::Underscore;
+                break;
+            case Input::Space:
+                state = State::Space;
+                break;
+            default:
+                return true;
+            }
+            break;
+
         case State::Upper:
             switch (input) {
             case Input::Upper:
+                state = State::UpperContinuation;
                 break;
             case Input::Lower:
                 state = State::Lower;

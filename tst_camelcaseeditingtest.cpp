@@ -45,6 +45,10 @@ private slots:
                                         << "Namespace|::Class::function";
         QTest::newRow("namespace-3")    << "::|memset()"
                                         << "|::memset()";
+        QTest::newRow("include-1")      << "#include <QString>|"
+                                        << "#include <QString|>";
+        QTest::newRow("include-2")      << "#include <QString|>"
+                                        << "#include <Q|String>";
     }
 
     void camelCaseLeft()
@@ -103,6 +107,12 @@ private slots:
                                         << "struct.|member";
         QTest::newRow("struct-member-2") << "struct|->member"
                                          << "struct->|member";
+        QTest::newRow("include-1")      << "#include |<QString>"
+                                        << "#include <|QString>";
+        QTest::newRow("include-2")      << "#include <|QString>"
+                                        << "#include <Q|String>";
+        QTest::newRow("include-3")      << "#include <Q|String>"
+                                        << "#include <QString|>";
     }
 
     void camelCaseRight()
