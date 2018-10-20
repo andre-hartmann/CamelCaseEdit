@@ -49,6 +49,14 @@ private slots:
                                         << "#include <QString|>";
         QTest::newRow("include-2")      << "#include <QString|>"
                                         << "#include <Q|String>";
+        QTest::newRow("destructor")     << "MainWindow::~|MainWindow()"
+                                        << "MainWindow|::~MainWindow()";
+        QTest::newRow("braces")         << "function()|"
+                                        << "function|()";
+        QTest::newRow("path-drive")     << "c:/|path/to/a/file"
+                                        << "c|:/path/to/a/file";
+        QTest::newRow("path")           << "c:/path|/to/a/file"
+                                        << "c:/|path/to/a/file";
     }
 
     void camelCaseLeft()
@@ -113,8 +121,10 @@ private slots:
                                         << "#include <Q|String>";
         QTest::newRow("include-3")      << "#include <Q|String>"
                                         << "#include <QString|>";
-        QTest::newRow("destructor")     << "MainWindow::|~MainWindow()"
+        QTest::newRow("destructor")     << "MainWindow|::~MainWindow()"
                                         << "MainWindow::~|MainWindow()";
+        QTest::newRow("braces")         << "function|()"
+                                        << "function()|";
         QTest::newRow("path-drive")     << "c|:/path/to/a/file"
                                         << "c:/|path/to/a/file";
         QTest::newRow("path")           << "c:/|path/to/a/file"

@@ -33,32 +33,29 @@ static int charRight(const QString &text, int position)
 
 static bool isWordSeparator(QChar c)
 {
-    return c.isSpace() || c.isPunct() || c == '_' || c == '-' || c == '>' || c == '<' || c == '~';
+    return c.isSpace() || c.isPunct() || c.isSymbol();
 }
 
-static int wordLeft(const QString &text, int position)
+static int skipSeparatorLeft(const QString &text, int position)
 {
     if (isWordSeparator(text.at(position))) {
         while (position > 0 && isWordSeparator(text.at(position)))
             --position;
 
-        if (position > 0)
+        if (!isWordSeparator(text.at(position)))
             return charRight(text, position);
     }
 
     return position;
 }
 
-static int wordRight(const QString &text, int position)
+static int skipSeparatorRight(const QString &text, int position)
 {
-    const int size = text.size() - 1;
+    const int size = text.size();
 
     if (isWordSeparator(text.at(position))) {
         while (position < size && isWordSeparator(text.at(position)))
             ++position;
-
-        if (position == size)
-            return charLeft(text, position);
     }
 
     return position;
@@ -88,7 +85,7 @@ int CamelCaseCursor::camelCaseLeft(const QString &text, int position)
 
     for (;;) {
         const QChar c = text.at(position);
-        Input input = classifyInput(c);
+        const Input input = classifyInput(c);
 
         switch (state) {
         case State::Default:
@@ -106,7 +103,7 @@ int CamelCaseCursor::camelCaseLeft(const QString &text, int position)
                 state = State::Space;
                 break;
             default:
-                return wordLeft(text, position);
+                return skipSeparatorLeft(text, position);
             }
             break;
         case State::Upper:
@@ -116,6 +113,9 @@ int CamelCaseCursor::camelCaseLeft(const QString &text, int position)
             default:
                 return charRight(text, position);
             }
+            break;
+        case State::UpperContinuation:
+            // not used
             break;
         case State::Lower:
             switch (input) {
@@ -155,7 +155,7 @@ int CamelCaseCursor::camelCaseLeft(const QString &text, int position)
                 state = State::Underscore;
                 break;
             default:
-                return wordLeft(text, position);
+                return skipSeparatorLeft(text, position);
             }
             break;
         }
@@ -190,7 +190,7 @@ int CamelCaseCursor::camelCaseRight(const QString &text, int position)
                 state = State::Underscore;
                 break;
             default:
-                return wordRight(text, position);
+                return skipSeparatorRight(text, position);
             }
             break;
         case State::Lower:
